@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "powershell": "powershell -NoProfile -ExecutionPolicy Bypass -File .github/scripts/sdlc-hook.ps1",
+        "bash": "pwsh -NoProfile -File .github/scripts/sdlc-hook.ps1",
+        "timeoutSec": 10
+      }
+    ],
+    "subagentStart": [
+      {
+        "type": "command",
+        "matcher": "SDLC (Requirements|Architecture|Design Review|Implementation Planning|Implementation|Code Review|Testing and Verification|PR Preparation)",
+        "powershell": "powershell -NoProfile -ExecutionPolicy Bypass -File .github/scripts/sdlc-hook.ps1",
+        "bash": "pwsh -NoProfile -File .github/scripts/sdlc-hook.ps1",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}
