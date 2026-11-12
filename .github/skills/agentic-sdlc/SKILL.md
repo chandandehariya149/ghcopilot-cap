@@ -8,7 +8,7 @@ argument-hint: 'User story text or source path; for continuation, identify the a
 Use this skill only when the user explicitly starts or continues the workflow. The coordinator owns stage order and approval state; delegate stage work to the matching agent in `.github/agents/`.
 
 ## Before starting
-1. Confirm an explicit trigger and read `.github/skills/agentic-sdlc/user-story-input.md`. If missing, empty, or containing only the guidance comment, ask the user to write/paste a story there or provide pasted text/a readable local file path, then stop. Jira/Confluence may be used only through an explicitly configured, authorized integration available to this harness. Otherwise request pasted text or a local export.
+1. Confirm an explicit trigger and obtain a Jira issue key or URL. Fetch the issue using the configured Atlassian MCP read tool. Verify and report issue key, summary, project, type, status, and description before drafting requirements. If only a key is provided, identify the authorized site with Atlassian resource discovery; if a URL is provided, use its site. If retrieval fails, request pasted story text or a readable local export and stop.
 2. Inspect repository state and conventions. Keep workflow setup validation separate from execution against an application repository.
 3. Work one stage at a time. Agents draft their outputs; only the user can approve them.
 

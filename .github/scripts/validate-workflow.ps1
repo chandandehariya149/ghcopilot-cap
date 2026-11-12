@@ -17,7 +17,6 @@ $requiredFiles = @(
     '.github/instructions/java-spring-boot.instructions.md',
     '.github/instructions/sdlc-artifacts.instructions.md',
     '.github/skills/agentic-sdlc/SKILL.md',
-    '.github/skills/agentic-sdlc/user-story-input.md',
     '.github/skills/agentic-sdlc/templates/requirements.md',
     '.github/skills/agentic-sdlc/templates/architecture.md',
     '.github/skills/agentic-sdlc/templates/design-review.md',
@@ -89,12 +88,12 @@ if ($skill -notmatch '(?m)^name:\s*["'']?agentic-sdlc["'']?\s*$') {
     throw 'Skill name must match its folder.'
 }
 $startPrompt = Get-Content -LiteralPath (Join-Path $workspaceRoot '.github/prompts/start-agentic-sdlc.prompt.md') -Raw
-if ($startPrompt -notmatch '\.github/skills/agentic-sdlc/user-story-input\.md' -or $startPrompt -notmatch '(?i)file-reading tool' -or $startPrompt -notmatch '(?i)empty' -or $startPrompt -notmatch '(?i)configured') {
-    throw 'Start prompt must read the reusable story input, stop on empty input, and condition external integrations on configuration.'
+if ($startPrompt -notmatch '(?i)Jira issue' -or $startPrompt -notmatch '(?i)Atlassian MCP' -or $startPrompt -notmatch '(?i)requirements clarification' -or $startPrompt -notmatch '(?i)approval') {
+    throw 'Start prompt must fetch a Jira issue via Atlassian MCP and stop at requirements approval.'
 }
 $readme = Get-Content -LiteralPath (Join-Path $workspaceRoot 'README.md') -Raw
 if ($readme -notmatch 'git rev-parse --show-toplevel' -or $readme -notmatch '(?i)base branch' -or $readme -notmatch '(?i)GitHub MCP is optional') {
     throw 'README must document repository/branch preflight and GitHub MCP prerequisites.'
 }
 
-Write-Output "Workflow asset validation passed: $($requiredFiles.Count) required files, $($agentNames.Count) unique agents, 2 prompts, 2 instruction files, story input, skill templates, and Copilot hooks."
+Write-Output "Workflow asset validation passed: $($requiredFiles.Count) required files, $($agentNames.Count) unique agents, 2 prompts, 2 instruction files, Jira-first intake, skill templates, and Copilot hooks."

@@ -1,7 +1,7 @@
 # Workspace-wide Copilot instructions
 
 - This repository defines an Agentic SDLC workflow. Do not start, resume, or simulate that workflow unless the user explicitly asks.
-- A story is never bundled or assumed. At every explicit workflow start, obtain pasted story text or a readable local file path; if absent, ask and stop. Use Jira/Confluence only through an explicitly configured, authorized integration; otherwise request pasted text or a local export.
+- A story is never bundled or assumed. At every explicit workflow start, obtain a Jira issue key or URL and fetch the issue through the configured, authorized Atlassian MCP. If Jira retrieval fails, ask for pasted story text or a readable local export and stop. Never fabricate or substitute a story.
 - Follow the coordinator's stage order and approval gates. A specialist may draft only its assigned stage and must not treat a draft, a handoff, or silence as approval.
 - Keep workflow setup changes separate from future application changes. Do not add sample application code, requirements, or fabricated user-story details to this workspace.
 - The eventual application target is Java with Spring Boot. Establish exact versions and project structure during approved architecture work, not during infrastructure setup.

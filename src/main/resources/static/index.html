@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f3ed">
+  <title>Daybook | Tasks</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f4f3ed;
+      --ink: #202a24;
+      --muted: #707870;
+      --line: #d7dad1;
+      --green: #245c46;
+      --green-dark: #184333;
+      --coral: #c65e49;
+      --white: #fffefa;
+      --focus: #e8ad45;
+      font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      background-color: var(--paper);
+      background-image: radial-gradient(#c9cec4 0.65px, transparent 0.65px);
+      background-size: 15px 15px;
+    }
+
+    button, input { font: inherit; }
+    button:focus-visible, input:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .shell {
+      width: min(100% - 40px, 760px);
+      margin: 0 auto;
+      padding: 46px 0 64px;
+      animation: arrive 420ms ease-out both;
+    }
+
+    .masthead {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 17px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .masthead-mark { display: flex; align-items: center; gap: 9px; }
+    .mark {
+      display: inline-grid;
+      width: 20px;
+      aspect-ratio: 1;
+      place-items: center;
+      border: 1.5px solid var(--green);
+      border-radius: 50%;
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .edition { color: var(--muted); font-weight: 500; letter-spacing: 0.04em; }
+    .intro { padding: 49px 0 34px; }
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--coral);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 58px;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .subtitle { margin: 12px 0 0; color: var(--muted); font-size: 15px; }
+    .entry {
+      display: flex;
+      gap: 10px;
+      padding: 8px;
+      border: 1px solid #c8cec5;
+      border-radius: 5px;
+      background: var(--white);
+      box-shadow: 0 5px 16px #273a2c0a;
+    }
+
+    .entry input {
+      width: 100%;
+      min-width: 0;
+      padding: 12px 13px;
+      border: 0;
+      background: transparent;
+      color: var(--ink);
+      font-size: 15px;
+    }
+
+    .entry input:focus-visible { outline-offset: -2px; }
+    .entry button {
+      flex: 0 0 auto;
+      min-height: 44px;
+      padding: 0 19px;
+      border: 0;
+      border-radius: 3px;
+      background: var(--green);
+      color: white;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background-color 140ms ease;
+    }
+
+    .entry button:hover { background: var(--green-dark); }
+    .notice { min-height: 24px; margin: 10px 0 0; color: var(--coral); font-size: 13px; }
+    .list-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-top: 21px;
+      padding: 14px 0 11px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .list-heading h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 23px;
+      font-weight: 400;
+    }
+
+    .count { color: var(--green); font-size: 13px; font-weight: 700; }
+    .tasks { margin: 0; padding: 0; list-style: none; }
+    .task {
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr) 58px;
+      align-items: center;
+      gap: 12px;
+      min-height: 62px;
+      border-bottom: 1px solid var(--line);
+      animation: arrive 220ms ease-out both;
+    }
+
+    .task input {
+      width: 19px;
+      height: 19px;
+      margin: 0;
+      accent-color: var(--green);
+      cursor: pointer;
+    }
+
+    .task-text { overflow-wrap: anywhere; font-size: 15px; line-height: 1.4; }
+    .task.completed .task-text { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--green); }
+    .delete {
+      display: grid;
+      width: 54px;
+      height: 36px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .delete:hover { background: #c65e4914; color: var(--coral); }
+    .empty {
+      padding: 28px 8px;
+      color: var(--muted);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+      font-style: italic;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin-top: 36px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    @keyframes arrive {
+      from { opacity: 0; transform: translateY(7px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .shell { width: min(100% - 28px, 760px); padding-top: 26px; }
+      .intro { padding-top: 40px; }
+      .entry { gap: 4px; }
+      .entry input { padding-left: 9px; font-size: 14px; }
+      .entry button { padding: 0 12px; font-size: 14px; }
+      h1 { font-size: 44px; }
+      .task { grid-template-columns: 22px minmax(0, 1fr) 58px; gap: 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div class="masthead-mark"><span class="mark" aria-hidden="true">D</span><span>Daybook</span></div>
+      <span class="edition">A little order, daily</span>
+    </header>
+
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">Your shared task list</p>
+      <h1 id="page-title">Make room<br>for what matters.</h1>
+      <p class="subtitle">One list, ready when you are.</p>
+    </section>
+
+    <form class="entry" id="todo-form">
+      <input id="todo-input" name="text" type="text" placeholder="What needs doing?" autocomplete="off" aria-label="Task text" required>
+      <button type="submit">Add task</button>
+    </form>
+    <p class="notice" id="notice" role="status" aria-live="polite"></p>
+
+    <section aria-labelledby="list-title">
+      <div class="list-heading">
+        <h2 id="list-title">The list</h2>
+        <span class="count" id="count">0 of 0 done</span>
+      </div>
+      <ul class="tasks" id="tasks" aria-label="Tasks"></ul>
+      <p class="empty" id="empty">Nothing on the list yet. Start with one small thing.</p>
+    </section>
+
+    <footer><span>Shared while this server is running</span><span>Daybook / 01</span></footer>
+  </main>
+
+  <script>
+    const form = document.querySelector("#todo-form");
+    const input = document.querySelector("#todo-input");
+    const list = document.querySelector("#tasks");
+    const count = document.querySelector("#count");
+    const empty = document.querySelector("#empty");
+    const notice = document.querySelector("#notice");
+    const submit = form.querySelector('button[type="submit"]');
+    let mutationInProgress = false;
+    let latestLoadSequence = 0;
+
+    function setMutationControlsDisabled(disabled) {
+      input.disabled = disabled;
+      submit.disabled = disabled;
+      form.setAttribute("aria-busy", String(disabled));
+      list.querySelectorAll("input, button").forEach(control => { control.disabled = disabled; });
+    }
+
+    async function request(url, options) {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: "Something went wrong. Please try again." }));
+        throw new Error(error.message || "Something went wrong. Please try again.");
+      }
+      return response.status === 204 ? null : response.json();
+    }
+
+    function render(todos) {
+      list.replaceChildren();
+      for (const todo of todos) {
+        const item = document.createElement("li");
+        item.className = todo.completed ? "task completed" : "task";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = todo.completed;
+        checkbox.disabled = mutationInProgress;
+        checkbox.setAttribute("aria-label", `Mark ${todo.text} ${todo.completed ? "not done" : "done"}`);
+        checkbox.addEventListener("change", () => mutate(async () => {
+          await request(`/api/todos/${encodeURIComponent(todo.id)}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ completed: checkbox.checked })
+          });
+          await load();
+        }));
+
+        const text = document.createElement("span");
+        text.className = "task-text";
+        text.textContent = todo.text;
+
+        const remove = document.createElement("button");
+        remove.className = "delete";
+        remove.type = "button";
+        remove.disabled = mutationInProgress;
+        remove.setAttribute("aria-label", `Delete ${todo.text}`);
+        remove.title = "Delete task";
+        remove.textContent = "Delete";
+        remove.addEventListener("click", () => mutate(async () => {
+          await request(`/api/todos/${encodeURIComponent(todo.id)}`, { method: "DELETE" });
+          await load();
+        }));
+
+        item.append(checkbox, text, remove);
+        list.append(item);
+      }
+
+      const completed = todos.filter(todo => todo.completed).length;
+      count.textContent = `${completed} of ${todos.length} done`;
+      empty.hidden = todos.length !== 0;
+    }
+
+    async function load() {
+      const sequence = ++latestLoadSequence;
+      const todos = await request("/api/todos");
+      if (sequence === latestLoadSequence) render(todos);
+    }
+
+    async function mutate(action) {
+      if (mutationInProgress) return;
+      mutationInProgress = true;
+      setMutationControlsDisabled(true);
+      notice.textContent = "";
+      try {
+        await action();
+      } catch (error) {
+        notice.textContent = error.message;
+        try { await load(); } catch {}
+      } finally {
+        mutationInProgress = false;
+        setMutationControlsDisabled(false);
+      }
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      mutate(async () => {
+        await request("/api/todos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: input.value })
+        });
+        input.value = "";
+        input.focus();
+        await load();
+      });
+    });
+
+    load().catch(error => { notice.textContent = error.message; });
+  </script>
+</body>
+</html>
