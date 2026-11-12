@@ -28,9 +28,8 @@ Adds a Java 17 and Spring Boot 4.1.2 todo application with a static browser UI a
 - Final verification does not establish application startup, live HTTP integration, or desktop/mobile viewport usability. These remain release follow-up checks; source inspection and the mocked-browser regression do not replace them.
 - No dependency vulnerability scan was run, and dependency vulnerability status is unknown. No CI workflow was found.
 - No `CHANGELOG.md` or established changelog convention was found; no changelog entry was prepared.
-- The selected target base remains `main`. Local `main` exists, but `origin/main` was not present when inspected; confirm the remote base ref before any PR creation.
-- The current `feature/todo-app` worktree is dirty: it includes staged SDLC workflow/README changes, unstaged edits to `design-review.md` and `impl-plan.md`, and untracked application and SDLC artifacts. Review intended PR scope and stage boundaries before any publication; existing changes and the retained stash were preserved.
-- This file is a local draft only. No commit, push, or remote PR has been made or authorized.
+- The approved PR scope combines the Jira-first workflow updates and cleanup with the TODO application and its SDLC artifacts.
+- The target base is `main`; the feature branch was reconciled with the current `origin/main` before PR creation.
 
 ## Reviewer Checklist
 - [ ] Requirements and acceptance criteria are satisfied, including startup and browser verification gaps.

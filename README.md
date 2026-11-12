@@ -1,6 +1,6 @@
 # Agentic SDLC Workflow
 
-This workspace contains a GitHub Copilot Agent Mode workflow for taking a user-provided story from clarification to PR preparation. The workflow is defined with native Copilot agents, prompts, instructions, a skill, and a scoped lifecycle hook. Workflow setup is separate from running it against an application repository.
+This workspace contains a GitHub Copilot Agent Mode workflow for taking a Jira user story from clarification to PR preparation. The workflow is defined with native Copilot agents, prompts, instructions, a skill, and a scoped lifecycle hook. Workflow setup is separate from running it against an application repository.
 
 ## Start a workflow
 
@@ -27,7 +27,7 @@ The eventual application stack is Java with Spring Boot. The architecture stage 
 
 ## Repository and GitHub prerequisites
 
-Requirements clarification and planning can work from the story and local workspace. Before application implementation, open the intended application repository as the workspace and confirm:
+Requirements clarification and planning can work from the fetched issue and local workspace. Before application implementation, open the intended application repository as the workspace and confirm:
 
 - `git rev-parse --show-toplevel` identifies the intended project root.
 - `git remote get-url origin` identifies the exact GitHub owner/repository (or the explicitly approved fork and upstream remotes).
@@ -44,7 +44,7 @@ Editing or validating files under `.github/` sets up the workflow; it does not p
 
 ## Approval and safety rules
 
-- Only an explicit user request starts a workflow. Merely opening this workspace or discussing the sample does not.
+- Only an explicit user request starts a workflow. Merely opening this workspace or discussing a story does not.
 - Record each approval in the corresponding artifact; agents may draft artifacts but must not mark them approved on the user's behalf.
 - Approval gates are enforced by the coordinator's staged interaction and recorded artifact checks; the lifecycle hook adds context but is not an authorization boundary. Review tool permissions and workspace trust before using agents.
 - Do not implement application code before requirements, architecture/design, and the implementation plan are approved.

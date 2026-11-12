@@ -92,8 +92,8 @@ if ($startPrompt -notmatch '(?i)Jira issue' -or $startPrompt -notmatch '(?i)Atla
     throw 'Start prompt must fetch a Jira issue via Atlassian MCP and stop at requirements approval.'
 }
 $readme = Get-Content -LiteralPath (Join-Path $workspaceRoot 'README.md') -Raw
-if ($readme -notmatch 'git rev-parse --show-toplevel' -or $readme -notmatch '(?i)base branch' -or $readme -notmatch '(?i)GitHub MCP is optional') {
-    throw 'README must document repository/branch preflight and GitHub MCP prerequisites.'
+if ($readme -notmatch 'git rev-parse --show-toplevel' -or $readme -notmatch '(?i)base branch' -or $readme -notmatch '(?i)GitHub MCP is optional' -or $readme -notmatch '(?i)Jira issue key') {
+    throw 'README must document Jira issue intake, repository/branch preflight, and GitHub MCP prerequisites.'
 }
 
 Write-Output "Workflow asset validation passed: $($requiredFiles.Count) required files, $($agentNames.Count) unique agents, 2 prompts, 2 instruction files, Jira-first intake, skill templates, and Copilot hooks."
