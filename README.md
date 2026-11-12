@@ -1,8 +1,45 @@
-# Agentic SDLC Workflow
+# Daybook TODO App
+
+Daybook is a small Spring Boot application with a plain browser interface and a shared, in-memory task list.
+
+## Run locally
+
+Requirements: Java 17 or later and Maven 3.6.3 or later.
+
+From the repository root, run:
+
+```powershell
+mvn test
+mvn spring-boot:run
+```
+
+Open [http://localhost:8080](http://localhost:8080). The list is shared by clients connected to the same running process and is cleared when the application restarts. No account or database is used.
+
+## Use the app
+
+- Add a task with the entry field. Surrounding whitespace is trimmed; blank tasks and case-insensitive duplicates are rejected.
+- Toggle a task's Done checkbox to complete or reopen it.
+- Delete a task with its Delete button.
+- The completed/total count and empty state update with the list.
+
+## REST API
+
+All endpoints use JSON except `DELETE` success, which has no response body.
+
+| Method and path | Behavior | Success | Expected errors |
+| --- | --- | --- | --- |
+| `GET /api/todos` | Return the shared list; an empty list is `[]`. | `200` | `500` for unexpected failures |
+| `POST /api/todos` | Create `{ "text": "..." }`; text is trimmed. | `201` | `400` invalid/blank request; `409` duplicate |
+| `PUT /api/todos/{id}` | Set `{ "completed": true }` or `false`. | `200` | `400` invalid completion; `404` unknown ID |
+| `DELETE /api/todos/{id}` | Remove the task. | `204` | `404` unknown ID |
+
+Expected errors return a JSON body with `code` and `message` fields. The application stores tasks in process memory, so a restart clears the list.
+
+## Agentic SDLC Workflow
 
 This workspace contains a GitHub Copilot Agent Mode workflow for taking a Jira user story from clarification to PR preparation. The workflow is defined with native Copilot agents, prompts, instructions, a skill, and a scoped lifecycle hook. Workflow setup is separate from running it against an application repository.
 
-## Start a workflow
+### Start a workflow
 
 Open Copilot Chat in Agent Mode and explicitly run `/start-agentic-sdlc` with a Jira issue key or URL (for example, `CB-1`). The start prompt fetches the issue through the configured Atlassian MCP and begins at requirements clarification only. If Jira retrieval fails, the workflow stops and asks for pasted story text or a local export.
 
@@ -10,7 +47,7 @@ Jira is the primary workflow source. Confluence is available only through an aut
 
 The orchestrator pauses for explicit human approval at requirements, architecture/design, implementation planning, implementation/review disposition, and verification. Use `/continue-agentic-sdlc` after an approval to proceed from the last approved artifact. Do not ask an agent to bypass a gate by invoking it directly.
 
-## Stage sequence and artifacts
+### Stage sequence and artifacts
 
 | Stage | Specialist | Primary artifact |
 | --- | --- | --- |
@@ -25,7 +62,7 @@ The orchestrator pauses for explicit human approval at requirements, architectur
 
 The eventual application stack is Java with Spring Boot. The architecture stage selects compatible versions based on the actual requirements and environment. The workflow infrastructure itself has no Java runtime dependency.
 
-## Repository and GitHub prerequisites
+### Repository and GitHub prerequisites
 
 Requirements clarification and planning can work from the fetched issue and local workspace. Before application implementation, open the intended application repository as the workspace and confirm:
 
@@ -38,11 +75,11 @@ Requirements clarification and planning can work from the fetched issue and loca
 
 The workflow can prepare a PR description without GitHub MCP. A remote PR additionally requires the feature branch to be pushed and an account with repository write and pull-request creation permissions. The PR agent prepares content only; creating the remote PR, committing, and pushing each require separate explicit authorization. GitHub MCP is optional for direct GitHub API actions, not required for local files, tests, Git operations, or PR-draft text.
 
-## Setup versus execution
+### Setup versus execution
 
 Editing or validating files under `.github/` sets up the workflow; it does not process a story. A run starts only when you explicitly invoke `/start-agentic-sdlc` with a Jira issue key or URL. The prompt fetches the issue only through the configured Atlassian MCP. The safety hook adds context but is not an authorization boundary; follow the documented gates and inspect tool permissions.
 
-## Approval and safety rules
+### Approval and safety rules
 
 - Only an explicit user request starts a workflow. Merely opening this workspace or discussing a story does not.
 - Record each approval in the corresponding artifact; agents may draft artifacts but must not mark them approved on the user's behalf.
@@ -52,7 +89,7 @@ Editing or validating files under `.github/` sets up the workflow; it does not p
 - Report blockers, assumptions, failed checks, and missing tools honestly. Never claim a test or review ran when it did not.
 - Jira issues are source input; generated, human-approved SDLC artifacts are separate root-level files. No user story is bundled in the workflow infrastructure.
 
-## Validate the workflow assets
+### Validate the workflow assets
 
 On Windows PowerShell, run:
 

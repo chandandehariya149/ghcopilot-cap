@@ -1,9 +1,9 @@
 # Verification Report
 
 - Status: COMPLETE
-- Revision/commit tested: Branch `feature/todo-app`; uncommitted worktree tested on 2026-11-12; no commit created.
+- Revision/commit tested: Application source was tested on the reconciled `feature/todo-app` tree before merge commit `17610ec`; PR #1 was subsequently merged to `main` as `7c04560`.
 - Environment: Windows 11 (amd64); Apache Maven 3.10.0; Oracle Java 21.0.12.1; Spring Boot 4.1.2; project baseline `java.version=17`.
-- Approval record: User approved the verification report on 2026-11-12 with the exact wording "APPROVED"; the documented limitations remain unverified.
+- Approval record: User approved the verification report on 2026-11-12 with the exact wording "APPROVED". The user later confirmed checking the app at `localhost:8080`, expected viewport visuals, task entry, unmarking, and all features; the exact device and viewport dimensions were not supplied.
 
 ## Automated checks
 | Check | Exact command | Result | Evidence/notes |
@@ -18,33 +18,39 @@
 
 The Maven runs emitted Mockito self-attachment/dynamic Java-agent warnings. Both commands nevertheless completed with `BUILD SUCCESS`; no test failure was reported.
 
+## User-reported live check
+
+- On 2026-11-12, the user reported: "I ran it and checked in live, it worked perfectly. from my side its done" and clarified that `localhost:8080`, expected viewport visuals, task entry, unmarking completed tasks, and all features were checked successfully.
+- Result: USER-REPORTED PASS for live application behavior and viewport visuals. The exact command, device, viewport dimensions, and per-feature sequence were not supplied; this run was not independently reproduced here.
+- The user confirms checking the viewport, but this report has no dimensions or screenshot to make that check independently reproducible.
+
 ## Acceptance-criteria coverage
 | Criterion ID | Test/evidence | Result |
 | --- | --- | --- |
-| AC-01 | `mvn test` loaded the static welcome-page mapping in the MockMvc application context; no request to `/` was asserted in the tests. Live HTTP/browser access was not attempted in this stage. | PARTIAL; actual root-page response blocked/unverified. |
-| AC-02 | MockMvc test verifies API POST creation, trimming, blank/malformed rejection, and duplicate rejection. The browser POST workflow was not exercised against a running application. | PARTIAL; API behavior PASS, browser workflow unverified. |
-| AC-03 | Static source inspection shows fetch-based submission and DOM rendering without a form page navigation; no browser add/no-reload interaction was run in this stage. | PARTIAL; source inspected, runtime behavior unverified. |
-| AC-04 | MockMvc verifies PUT completion in both directions, invalid/missing completion, and unknown-ID 404. Source inspection confirms completed styling and user-visible errors are written as text. No browser or live API interaction was run. | PARTIAL; backend contract PASS, UI runtime unverified. |
-| AC-05 | MockMvc verifies DELETE 204 and unknown-ID 404. Source inspection confirms a fetch-based delete action and text-based error display; no browser or live API interaction was run. | PARTIAL; backend contract PASS, UI runtime unverified. |
-| AC-06 | Source inspection confirms counts are derived from the task array and updated during render. No browser action/count transition was exercised. | PARTIAL; source inspected, runtime behavior unverified. |
-| AC-07 | MockMvc verifies trimmed task creation and blank/malformed POST errors; service tests verify whitespace-only rejection. Source inspection confirms the UI displays request errors as text. | PARTIAL; server validation PASS, browser feedback unverified. |
-| AC-08 | `mvn test` and `mvn package` pass, but neither establishes that a separately launched server starts. A prior Java debug launch timed out after 120 seconds; the supplied session check found no active debug session and localhost:8080 did not accept connections. Per the launch constraint, no retry, `mvn spring-boot:run`, or terminal application launch was attempted. | BLOCKED / UNVERIFIED for startup. |
-| AC-09 | Source contains a narrow-screen CSS breakpoint, but no actual application desktop or mobile viewport was checked. | BLOCKED / UNVERIFIED. |
-| AC-10 | Source inspection confirms process-local service storage and no `localStorage`. MockMvc exercises the API within a test context, but no running-server refresh or restart-persistence behavior was tested. | PARTIAL; implementation inspected, live refresh behavior unverified. |
-| AC-11 | `TodoControllerTest.createReturnsTrimmedTaskAndRejectsBlankAndDuplicate` and `TodoServiceTest.trimsTextRejectsBlankAndCaseInsensitiveDuplicates` pass; service test also covers locale-independent comparison. | PASS for backend duplicate contract; UI feedback not browser-verified. |
+| AC-01 | The user confirms checking the application at `localhost:8080` and seeing the expected viewport visuals. The root request was not independently reproduced. | USER-REPORTED PASS. |
+| AC-02 | MockMvc verifies creation and validation; the user reports testing task entry and all features live. | USER-REPORTED PASS; backend contract independently tested. |
+| AC-03 | The user reports live feature checks succeeded; no automated browser no-reload assertion was run. | USER-REPORTED PASS; not independently reproduced. |
+| AC-04 | MockMvc verifies reversible PUT and unknown-ID behavior; the user explicitly confirms unmarking and reports all features worked live. | USER-REPORTED PASS; backend contract independently tested. |
+| AC-05 | MockMvc verifies DELETE success and unknown-ID behavior; the user reports all features worked live. | USER-REPORTED PASS; backend contract independently tested. |
+| AC-06 | Source inspection confirms derived counts; the user reports expected visuals and all features working. | USER-REPORTED PASS; not independently reproduced. |
+| AC-07 | MockMvc/service tests verify trimming and blank errors; the user reports all features working live. | USER-REPORTED PASS; backend validation independently tested. |
+| AC-08 | The user later reported running and checking the application live successfully. The command and startup details were not supplied; this was not independently reproduced. | USER-REPORTED PASS; not independently verified. |
+| AC-09 | The user confirms checking the viewport and seeing expected visuals; device and viewport dimensions were not recorded. | USER-REPORTED PASS; exact viewport is not independently reproducible. |
+| AC-10 | Source inspection confirms process-local storage and no `localStorage`; the user reports testing all features live. | USER-REPORTED PASS; refresh/restart sequence not independently reproduced. |
+| AC-11 | Controller/service tests pass for trimmed, case-insensitive duplicates; the user reports all features worked live. | PASS for backend contract and USER-REPORTED PASS for live UI behavior. |
 
-**NFR coverage:** NFR-01 technology and static-resource choices are confirmed by `pom.xml`, source location, and successful test/package builds; its startup criterion remains blocked as described for AC-08. NFR-02 is not verified at runtime because no real app desktop/mobile viewport checks were performed. NFR-03 is only source-inspected: the server uses an in-memory list and the page has no `localStorage`, but refresh retention and restart reset were not exercised against a live server. FR-09's single shared service is visible in the implementation, but cross-client sharing was not independently exercised.
+**NFR coverage:** NFR-01 is supported by `pom.xml`, source location, passing test/package builds, and the user's live confirmation at `localhost:8080`. NFR-02 has a user-reported pass for expected viewport visuals, but no device or viewport dimensions were recorded. NFR-03 is source-inspected and covered by the user's general live confirmation; refresh/restart behavior was not independently reproduced. FR-09's single shared service is visible in the implementation; multi-client sharing was not separately detailed by the user.
 
-**Existing browser evidence, not rerun:** `code-review.md` records the focused CR-01 mocked-browser regression: delayed initial GET and PUT, attempted second synthetic toggle, stale GET ignored, controls disabled, one PUT issued, and final UI state matched the mocked server. This is mocked-API evidence only; it does not establish real API integration, root-page HTTP behavior, broader CRUD/validation behavior, or desktop/mobile viewport usability.
+**Existing browser evidence, not rerun:** `code-review.md` records the focused CR-01 mocked-browser regression: delayed initial GET and PUT, attempted second synthetic toggle, stale GET ignored, controls disabled, one PUT issued, and final UI state matched the mocked server. Separately, the user reports a successful live check at `localhost:8080`, including expected viewport visuals and all features; that result is not independently reproduced here.
 
 ## Output-document quality
 - Required sections present: Yes; this report follows the repository verification-report template.
 - Traceability and consistency: Requirements and AC IDs were checked against the approved plan, architecture, tests, and implementation. IP-01–IP-08 IDs are unique with statuses consistent with `implementation-report.md` and the deferred verification work. `implementation-report.md` records historical startup/API smoke results; those historical results were not repeated or treated as live verification in this report. `code-review.md` is COMPLETE and contains explicit user disposition for CR-01 and CR-02.
-- Unresolved placeholders or unsupported claims: No template placeholders remain. Live startup/HTTP integration, actual app desktop/mobile viewports, browser end-to-end coverage beyond the documented CR-01 mock, and dependency vulnerability status are explicitly unverified rather than claimed as passing.
+- Unresolved placeholders or unsupported claims: No template placeholders remain. Live startup/features and viewport visuals are user-reported, not independently reproduced; exact device/viewport dimensions and dependency vulnerability status remain unknown.
 
 ## Skipped checks and limitations
-- No Java debug launch, `mvn spring-boot:run`, terminal application launch, or live HTTP smoke was attempted, as required by the launch constraint. Startup and live HTTP integration are blocked/unverified for this verification stage.
-- No actual application desktop or narrow mobile viewport checks were performed. Browser/mobile usability and horizontal overflow remain unverified; the CSS breakpoint is source evidence only.
+- This verifier did not launch the application or run live HTTP checks. The user confirms a successful check at `localhost:8080`, but command and request details were not provided.
+- The user confirms checking expected viewport visuals. Device and viewport dimensions were not recorded, so the exact viewport and horizontal-overflow result cannot be independently reproduced.
 - No additional browser session was run. The previously documented CR-01 regression used a mocked API and is limited to its stated delayed-GET/PUT mutation-order scenario.
 - No dependency vulnerability scan was run; no clean security result is asserted.
 - No PR preparation or code review rerun was performed.
