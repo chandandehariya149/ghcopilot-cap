@@ -2,7 +2,7 @@
 
 - Status: COMPLETE
 - Approved plan: `impl-plan.md` (APPROVED on 2026-11-12 with exact wording "APPROVED")
-- Revision/commit: No commit created; branch `feature/todo-app`
+- Revision/commit: Application commit `a2b391a`, reconciled with `main` by merge commit `17610ec`; PR #1 merged as `7c04560`. The current post-merge README and verification-report updates are local and uncommitted.
 - Approval record: User approved implementation completion on 2026-11-12 with the exact wording "approved".
 
 ## Task outcomes
@@ -14,8 +14,8 @@
 | IP-04 | COMPLETE | `src/main/java/com/todoapp/TodoController.java`, `TodoError.java`, `TodoExceptionHandler.java` | Implemented approved routes/statuses and stable JSON errors for validation, duplicates, malformed bodies, and missing IDs. |
 | IP-05 | COMPLETE | `src/main/resources/static/index.html` | Responsive static UI; derived counts and empty state; same-origin fetch; task and error strings are rendered as text; no browser task storage. |
 | IP-06 | COMPLETE | `src/test/java/com/todoapp/TodoServiceTest.java`, `TodoControllerTest.java` | Five service tests (including Turkish-default-locale behavior and concurrent duplicate atomicity) and five MVC status/body tests. |
-| IP-07 | NOT STARTED | None | Browser-driven desktop/mobile interaction and viewport checks were not run; deferred to the later verification stage. |
-| IP-08 | NOT STARTED | None | Independent code review, final verification stage, and PR preparation were not performed. |
+| IP-07 | COMPLETE | `src/main/resources/static/index.html` | User reports checking the app at `localhost:8080`, expected viewport visuals, task entry, unmarking completed tasks, and all features successfully. Exact command, device, and viewport dimensions were not supplied; see `verification-report.md`. |
+| IP-08 | COMPLETE | `code-review.md`, `verification-report.md`, `pr-description.md` | Code review and verification were approved, and PR #1 was merged to `main` as `7c04560`. |
 
 ## Checks actually run
 | Command | Result | Evidence/notes |
@@ -31,11 +31,12 @@
 | Java debug launch + read-only `localhost:8080` probe | INCONCLUSIVE / NOT RUNNING | The launch tool timed out after 120 seconds; one debug-session check found no active session, and GET requests to `/` and `/api/todos` could not connect. No retry was attempted. This is separate from the earlier successful `mvn spring-boot:run` smoke, which stopped its process after checking. |
 | `mvn spring-boot:run` from the target repository | PASS | Spring Boot 4.1.2 started on port 8080 and served the classpath welcome page. An initial invocation from the workspace parent had no POM; rerun from the target repo succeeded. |
 | PowerShell HTTP smoke requests using `Invoke-WebRequest -UseBasicParsing` | PASS | `/` 200; GET 200 with `[]`; POST 201 with trimmed text; PUT 200 with `completed: true`; DELETE 204. Temporary smoke task was removed and the app process was stopped. |
+| User-reported live check | User confirmation (2026-11-12) | USER-REPORTED PASS | User confirmed localhost:8080, expected viewport visuals, adding tasks, unmarking, and all features. Exact command and viewport dimensions were not supplied; see `verification-report.md`. |
 | Workspace diagnostics for Java sources | PASS | No errors reported. |
 | Static source search for `innerHTML` and `localStorage` | PASS | Neither found in the page; user-controlled text is assigned via `textContent`. |
 
 ## Risks and open decisions
-- Browser-run interaction, hostile-markup behavior, and mobile viewport/overflow checks remain unverified; IP-07 is not marked complete.
+- The user confirmed expected viewport visuals, but did not specify device or dimensions; the live check is user-reported and was not independently reproduced.
 - The application is not currently running. A subsequent debugger launch was unconfirmed and timed out; no automatic retry was made.
 - The application intentionally has one unauthenticated process-local list, which resets at restart as specified.
 - No implementation scope deviations were made. The standard `/target/` ignore was added so Maven output remains untracked without deleting generated files.
