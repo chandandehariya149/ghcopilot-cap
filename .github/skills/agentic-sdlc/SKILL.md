@@ -8,9 +8,9 @@ argument-hint: 'Jira issue key or URL; for continuation, identify the approval j
 Use this skill only when the user explicitly starts or continues the workflow. The coordinator owns stage order and approval state; delegate stage work to the matching agent in `.github/agents/`.
 
 ## Before starting
-1. Confirm an explicit trigger and obtain a Jira issue key or URL. Fetch the issue through the configured Atlassian MCP read tool. Verify and report issue key, summary, project, type, status, and description. If only a key is given, list accessible sites and select the matching authorized Jira site; if a URL is given, use its site. If Jira retrieval fails, ask for pasted story text or a readable local export and stop.
-2. Inspect repository state and conventions. Keep workflow setup separate from application execution.
-3. Work one stage at a time. Specialists draft their outputs; only the user approves them.
+1. Confirm an explicit trigger and obtain a Jira issue key or URL. Fetch the issue using the configured Atlassian MCP read tool. Verify and report issue key, summary, project, type, status, and description before drafting requirements. If only a key is provided, identify the authorized site with Atlassian resource discovery; if a URL is provided, use its site. If retrieval fails, request pasted story text or a readable local export and stop.
+2. Inspect repository state and conventions. Keep workflow setup validation separate from execution against an application repository.
+3. Work one stage at a time. Agents draft their outputs; only the user can approve them.
 
 ## Ordered stages and gates
 1. **Requirements:** clarify gaps, draft `requirements.md`, ask for explicit approval.
